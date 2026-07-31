@@ -155,7 +155,7 @@ $invoice = new InvoiceDocumentData(
         participant: new ParticipantIdentifier(IdentifierScheme::DK_CVR, '87654321'),
     ),
     lines: [
-        new InvoiceLineData(id: 1),
+        new InvoiceLineData(id: '1'),
     ],
     totals: new InvoiceTotalsData(
         subtotalAmount: '1000.00',
@@ -244,6 +244,16 @@ $html = $ecourier->documents()->renderAsHtml('doc_01xyz')->body();
 $pdf  = $ecourier->documents()->renderAsPdf('doc_01xyz')->body();
 
 file_put_contents('invoice.pdf', $pdf);
+```
+
+### Mark a document as delivered
+
+For received documents, mark them as delivered once your application has finished processing them:
+
+```php
+$document = $ecourier->documents()->markDelivered('doc_01xyz');
+
+echo $document->status; // DocumentStatus::Delivered
 ```
 
 ---
@@ -345,6 +355,41 @@ echo $participant->entityName; // GLN Denmark
 echo $participant->mode->value; // Live
 echo $participant->orgNo;      // 9999796418186
 ```
+
+---
+
+## Webhooks
+
+eCourier sends webhooks for document lifecycle events. Parse the raw request body with `WebhookEventFactory` to get a typed event DTO — no need to know the event type up front.
+
+```php
+use Ecourier\Data\Webhook\WebhookEventFactory;
+
+$event = WebhookEventFactory::fromRequestBody($request->getContent());
+```
+
+`fromArray()` is also available if you've already decoded the JSON body yourself.
+
+Every event type maps to a subclass of the abstract `WebhookEvent`. Document events (`Document.Send.Created`, `Document.Send.Delivered`, `Document.Send.Failed`, `Document.Receive.Created`, `Document.Receive.Ready`, `Document.Receive.Delivered`) map to `DocumentWebhook`, which carries the same `DocumentData` DTO used by [`documents()->find()`](#get-a-single-document):
+
+```php
+use Ecourier\Data\Webhook\DocumentWebhook;
+use Ecourier\Enums\WebhookEventType;
+
+if ($event instanceof DocumentWebhook) {
+    echo $event->event;                 // WebhookEventType::DocumentSendDelivered
+    echo $event->eventId;               // evt_01hxyz
+    echo $event->occurredAt->format(DATE_ATOM);
+    echo $event->document->id;          // 01kmkdaf55vrrecfy70180tpr6
+    echo $event->document->status->value; // Delivered
+}
+
+if ($event->event === WebhookEventType::DocumentReceiveCreated) {
+    // a new inbound document has arrived
+}
+```
+
+An unknown `event` value throws `InvalidArgumentException`; malformed JSON throws `JsonException`.
 
 ---
 
@@ -677,6 +722,28 @@ Shared by document endpoints (`find`, `markDelivered`, list items) and the `docu
 | `$id` | `string` |
 | `$e2eMessageUuid` | `string` |
 
+### `WebhookEvent` (abstract)
+
+Base fields shared by every webhook event DTO.
+
+| Property | Type |
+|---|---|
+| `$eventId` | `string` |
+| `$event` | `WebhookEventType` |
+| `$occurredAt` | `DateTimeImmutable` |
+| `$version` | `int` |
+| `$teamId` | `string` |
+| `$mode` | `Mode` |
+| `$companyId` | `string` |
+
+### `DocumentWebhook`
+
+Extends `WebhookEvent`. Returned by `WebhookEventFactory` for all `Document.*` events.
+
+| Property | Type |
+|---|---|
+| `$document` | `DocumentData` |
+
 ### `InvoiceDocumentData` (request payload)
 
 | Property | Type | Required |
@@ -698,7 +765,7 @@ Shared by document endpoints (`find`, `markDelivered`, list items) and the `docu
 
 | Property | Type | Required |
 |---|---|---|
-| `$id` | `int` | Yes |
+| `$id` | `string` | Yes |
 | `$name` | `?string` | No |
 | `$description` | `?string` | No |
 | `$quantity` | `?string` | No |
