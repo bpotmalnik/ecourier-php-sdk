@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ecourier\Data\Webhook;
+namespace Ecourier\Data;
 
-class UblData
+class DocumentUblData
 {
     public function __construct(
         public readonly ?string $id,

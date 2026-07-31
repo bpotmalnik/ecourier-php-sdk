@@ -13,6 +13,9 @@
             "created_at": "2024-06-01T10:00:00Z",
             "transmitted_at": "2024-06-01T10:05:00Z",
             "channel": "NemHandel",
+            "mode": "Test",
+            "direction": "Send",
+            "submission_format": "XML",
             "status": "Delivered",
             "type": "Invoice",
             "latest_e2e_message_uuid": "msg_01abc",
@@ -23,11 +26,15 @@
                 "scheme_icd": "0184",
                 "identifier": "12345678"
             },
-            "receiver": {
+            "recipient": {
                 "full_identifier": "0184:87654321",
                 "scheme": "DK:CVR",
                 "scheme_icd": "0184",
                 "identifier": "87654321"
+            },
+            "company": {
+                "id": "0101knwp96k3ggvkra831yrd74zh",
+                "name": "Acme Danmark A/S"
             },
             "ubl": {
                 "id": "INV-2024-001",

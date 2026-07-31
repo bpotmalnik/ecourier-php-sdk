@@ -144,11 +144,14 @@ it('includes null values in DocumentData toArray', function () {
 
     expect($result)->toHaveKeys([
         'id', 'status', 'channel', 'mode', 'direction', 'type', 'submission_format',
-        'sender', 'recipient', 'latest_e2e_message_uuid', 'latest_e2e_transmission_id', 'company', 'created_at',
+        'sender', 'recipient', 'latest_e2e_message_uuid', 'latest_e2e_transmission_id', 'company',
+        'dashboard_url', 'created_at', 'transmitted_at', 'ubl',
     ]);
     expect($result['mode'])->toBeNull();
     expect($result['sender'])->toBeNull();
     expect($result['company'])->toBeNull();
+    expect($result['dashboard_url'])->toBeNull();
+    expect($result['ubl'])->toBeNull();
 });
 
 it('serializes DocumentData sender and recipient via ParticipantIdentifier toArray', function () {
@@ -163,6 +166,7 @@ it('serializes DocumentData sender and recipient via ParticipantIdentifier toArr
     expect($result['recipient'])->toBeArray();
     expect($result['recipient']['identifier'])->toBe('5790000123456');
     expect($result['company']['name'])->toBe('Acme Danmark A/S');
+    expect($result['ubl']['id'])->toBe('INV-2024-001');
 });
 
 it('roundtrips DocumentData through fromArray and toArray', function () {
@@ -179,6 +183,10 @@ it('roundtrips DocumentData through fromArray and toArray', function () {
     expect($result['submission_format'])->toBe($fixture['submission_format']);
     expect($result['latest_e2e_message_uuid'])->toBe($fixture['latest_e2e_message_uuid']);
     expect($result['latest_e2e_transmission_id'])->toBe($fixture['latest_e2e_transmission_id']);
+    expect($result['dashboard_url'])->toBe($fixture['dashboard_url']);
+    expect($result['created_at'])->toBe($fixture['created_at']);
+    expect($result['transmitted_at'])->toBe($fixture['transmitted_at']);
+    expect($result['ubl']['profile_id'])->toBe($fixture['ubl']['profile_id']);
 });
 
 // --- CompanyData ---

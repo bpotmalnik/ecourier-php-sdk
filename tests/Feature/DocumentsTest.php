@@ -87,6 +87,9 @@ it('can get a document', function () {
     expect($document->latestE2eMessageUuid)->toBe('ddc3b3ef-cbd4-4630-9d65-896b3e1abc61');
     expect($document->latestE2eTransmissionId)->toBe('trans_01def');
     expect($document->company?->name)->toBe('Acme Danmark A/S');
+    expect($document->dashboardUrl)->toBe('https://app.ecourier.io/live/acme-danmark/documents/01kmkdaf55vrrecfy70180tpr6');
+    expect($document->transmittedAt?->format('Y-m-d\TH:i:s\Z'))->toBe('2024-06-01T10:05:00Z');
+    expect($document->ubl?->id)->toBe('INV-2024-001');
 });
 
 // --- MarkDocumentDeliveredRequest ---

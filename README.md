@@ -588,6 +588,8 @@ All resources return typed DTOs with readonly properties.
 
 ### `DocumentData`
 
+Shared by document endpoints (`find`, `markDelivered`, list items) and the `document` payload of `DocumentWebhook` — the same shape everywhere, so fields that only apply to one context are optional.
+
 | Property | Type |
 |---|---|
 | `$id` | `string` |
@@ -602,7 +604,10 @@ All resources return typed DTOs with readonly properties.
 | `$latestE2eMessageUuid` | `?string` |
 | `$latestE2eTransmissionId` | `?string` |
 | `$company` | `?DocumentCompanyData` |
+| `$dashboardUrl` | `?string` |
 | `$createdAt` | `?DateTimeImmutable` |
+| `$transmittedAt` | `?DateTimeImmutable` |
+| `$ubl` | `?DocumentUblData` |
 
 ### `DocumentParticipantData`
 
@@ -612,6 +617,15 @@ All resources return typed DTOs with readonly properties.
 | `$scheme` | `IdentifierScheme` |
 | `$schemeIcd` | `string` |
 | `$identifier` | `string` |
+
+### `DocumentUblData`
+
+| Property | Type |
+|---|---|
+| `$id` | `?string` |
+| `$uuid` | `?string` |
+| `$profileId` | `?string` |
+| `$customizationId` | `?string` |
 
 ### `ParticipantData`
 
