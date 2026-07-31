@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ecourier\Data\Webhook;
 
 use DateTimeImmutable;
+use Ecourier\Data\DocumentData;
 use Ecourier\Enums\Mode;
 use Ecourier\Enums\WebhookEventType;
 

@@ -5,9 +5,11 @@ declare(strict_types=1);
 use Ecourier\Data\Webhook\DocumentWebhook;
 use Ecourier\Data\Webhook\WebhookEventFactory;
 use Ecourier\Enums\Channel;
+use Ecourier\Enums\Direction;
 use Ecourier\Enums\DocumentStatus;
 use Ecourier\Enums\DocumentType;
 use Ecourier\Enums\Mode;
+use Ecourier\Enums\SubmissionFormat;
 use Ecourier\Enums\WebhookEventType;
 
 function webhookBody(string $event = 'Document.Send.Created'): string
@@ -61,8 +63,12 @@ it('maps nested document webhook data', function () {
     expect($webhook->document->status)->toBe(DocumentStatus::Delivered);
     expect($webhook->document->type)->toBe(DocumentType::Invoice);
     expect($webhook->document->sender->identifier)->toBe('12345678');
-    expect($webhook->document->receiver->identifier)->toBe('87654321');
+    expect($webhook->document->recipient->identifier)->toBe('87654321');
     expect($webhook->document->ubl->id)->toBe('INV-2024-001');
+    expect($webhook->document->mode)->toBe(Mode::Test);
+    expect($webhook->document->direction)->toBe(Direction::Send);
+    expect($webhook->document->submissionFormat)->toBe(SubmissionFormat::XML);
+    expect($webhook->document->company?->name)->toBe('Acme Danmark A/S');
 });
 
 it('serializes document webhook data with wire keys', function () {
@@ -72,7 +78,7 @@ it('serializes document webhook data with wire keys', function () {
     expect($result['payload']['document']['dashboard_url'])->toBe('https://app.ecourier.test/documents/doc_01xyz');
     expect($result['payload']['document']['latest_e2e_message_uuid'])->toBe('msg_01abc');
     expect($result['payload']['document']['sender']['scheme'])->toBe('DK:CVR');
-    expect($result['payload']['document']['receiver']['identifier'])->toBe('87654321');
+    expect($result['payload']['document']['recipient']['identifier'])->toBe('87654321');
     expect($result['payload']['document']['ubl']['profile_id'])->toBe('urn:www.nesubl.eu:profiles:profile5:ver2.0');
 });
 

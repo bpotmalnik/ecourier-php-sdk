@@ -27,7 +27,10 @@ class DocumentData
         public readonly ?string $latestE2eMessageUuid = null,
         public readonly ?string $latestE2eTransmissionId = null,
         public readonly ?DocumentCompanyData $company = null,
+        public readonly ?string $dashboardUrl = null,
         public readonly ?DateTimeImmutable $createdAt = null,
+        public readonly ?DateTimeImmutable $transmittedAt = null,
+        public readonly ?DocumentUblData $ubl = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -45,7 +48,10 @@ class DocumentData
             latestE2eMessageUuid: $data['latest_e2e_message_uuid'] ?? null,
             latestE2eTransmissionId: $data['latest_e2e_transmission_id'] ?? null,
             company: isset($data['company']) && $data['company'] !== null ? DocumentCompanyData::fromArray($data['company']) : null,
+            dashboardUrl: $data['dashboard_url'] ?? null,
             createdAt: isset($data['created_at']) ? new DateTimeImmutable($data['created_at']) : null,
+            transmittedAt: isset($data['transmitted_at']) ? new DateTimeImmutable($data['transmitted_at']) : null,
+            ubl: isset($data['ubl']) ? DocumentUblData::fromArray($data['ubl']) : null,
         );
     }
 
@@ -64,7 +70,10 @@ class DocumentData
             'latest_e2e_message_uuid' => $this->latestE2eMessageUuid,
             'latest_e2e_transmission_id' => $this->latestE2eTransmissionId,
             'company' => $this->company?->toArray(),
+            'dashboard_url' => $this->dashboardUrl,
             'created_at' => $this->createdAt?->format('Y-m-d\TH:i:s\Z'),
+            'transmitted_at' => $this->transmittedAt?->format('Y-m-d\TH:i:s\Z'),
+            'ubl' => $this->ubl?->toArray(),
         ];
     }
 }
