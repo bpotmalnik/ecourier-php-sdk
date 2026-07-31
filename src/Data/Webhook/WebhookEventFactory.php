@@ -9,16 +9,6 @@ use InvalidArgumentException;
 
 final class WebhookEventFactory
 {
-    /** @var array<string, class-string<WebhookEvent>> */
-    private const EVENT_MAP = [
-        WebhookEventType::DocumentSendCreated->value => DocumentWebhook::class,
-        WebhookEventType::DocumentSendDelivered->value => DocumentWebhook::class,
-        WebhookEventType::DocumentSendFailed->value => DocumentWebhook::class,
-        WebhookEventType::DocumentReceiveCreated->value => DocumentWebhook::class,
-        WebhookEventType::DocumentReceiveReady->value => DocumentWebhook::class,
-        WebhookEventType::DocumentReceiveDelivered->value => DocumentWebhook::class,
-    ];
-
     public static function fromRequestBody(string $body): WebhookEvent
     {
         return self::fromArray(json_decode($body, true, flags: JSON_THROW_ON_ERROR));
@@ -26,12 +16,13 @@ final class WebhookEventFactory
 
     public static function fromArray(array $data): WebhookEvent
     {
-        $class = self::EVENT_MAP[$data['event'] ?? null] ?? null;
+        $event = $data['event'] ?? null;
+        $type = is_string($event) ? WebhookEventType::tryFrom($event) : null;
 
-        if ($class === null) {
+        if ($type === null) {
             throw new InvalidArgumentException('Unknown webhook event.');
         }
 
-        return $class::fromArray($data);
+        return $type->dtoClass()::fromArray($data);
     }
 }
